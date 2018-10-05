@@ -1,0 +1,39 @@
+---
+- hosts: all
+  sudo: yes
+  tasks:
+  - name: install nginx
+    apt: name=nginx state=installed update_cache=yes
+  - name: start Service
+    service: name=nginx state=started
+
+  - name: Setup nginx with SSL
+    become: yes
+    become_method: sudo
+    gather_facts: true
+    tags: [https]
+  - copy:
+    src: ../../files/self-signed.conf
+    dest: /etc/nginx/snippets/self-signed.conf
+    owner: root
+    group: root
+    mode: 0644
+  - copy:
+    src: ../../files/ssl-params.conf
+    dest: /etc/nginx/snippets/ssl-params.conf
+    owner: root
+    group: root
+    mode: 0644
+  - copy:
+    src: ../../files/google.com
+    dest: /etc/nginx/sites-enabled/google.com
+    owner: root
+    group: root
+    mode: 0644
+ 
+  - name: Restart nginx
+   service:
+   name: nginx
+   state: restarted
+  - wait_for:
+   port: 443
