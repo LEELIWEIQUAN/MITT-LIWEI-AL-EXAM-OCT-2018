@@ -1,0 +1,18 @@
+---
+- hosts: all
+  sudo: yes
+  tasks:
+  - name: "SSH-CONFIG "
+    lineinfile:
+      dest: "/etc/ssh/sshd_config"
+      line: "AllowGroups sshusers"
+    tags:
+     -add_a_line
+  - name: "SSH-BANNER"
+    lineinfile:
+      dest: "etc/motd"
+      line: "PROPERTY OF ACME CO"
+    tags:
+     -add_a_line
+      
+    notify: "Restart sshd"
